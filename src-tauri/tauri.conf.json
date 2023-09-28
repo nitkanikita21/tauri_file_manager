@@ -18,7 +18,11 @@
         "open": true
       },
       "window": {
-        "startDragging": true
+        "startDragging": true,
+        "minimize": true,
+        "maximize": true,
+        "unmaximize": true,
+        "close": true
       }
     },
     "bundle": {
@@ -41,8 +45,8 @@
         "fullscreen": false,
         "resizable": true,
         "title": "tauri-fm-2",
-        "width": 800,
-        "height": 600,
+        "width": 900,
+        "height": 700,
         "decorations": false
       }
     ]

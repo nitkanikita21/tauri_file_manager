@@ -13,21 +13,21 @@ pub enum FileInfo {
         name: String,
         path: PathBuf,
         size: u64,
-        #[serde(with = "humantime_serde")]
+        #[serde(with = "humantime_serde", rename = "createdAt")]
         created_at: SystemTime,
-        #[serde(with = "humantime_serde")]
+        #[serde(with = "humantime_serde", rename = "modifiedAt")]
         modified_at: SystemTime,
-        #[serde(with = "humantime_serde")]
+        #[serde(with = "humantime_serde", rename = "lastAccessed")]
         last_accessed: SystemTime,
     },
     Directory {
         name: String,
         path: PathBuf,
-        #[serde(with = "humantime_serde")]
+        #[serde(with = "humantime_serde", rename = "createdAt")]
         created_at: SystemTime,
-        #[serde(with = "humantime_serde")]
+        #[serde(with = "humantime_serde", rename = "modifiedAt")]
         modified_at: SystemTime,
-        #[serde(with = "humantime_serde")]
+        #[serde(with = "humantime_serde", rename = "lastAccessed")]
         last_accessed: SystemTime,
     },
     Symlink {
