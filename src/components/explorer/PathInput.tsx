@@ -13,9 +13,9 @@ export default function (props: { class: ClassNameValue }) {
     const timer = setInterval(reload, 3000); // reload file list every 1 second
     onCleanup(() => clearInterval(timer));
 
-    onMount(()=>{
-        invoke<string>("get_cwd_path").then(setPath)
-    })
+    onMount(() => {
+        invoke<string>("get_cwd_path").then(setPath);
+    });
 
     function goToParent() {
         invoke<string>("get_parent", { path: filesStore.path }).then(

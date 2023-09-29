@@ -1,4 +1,3 @@
-import { HiSolidFolder, HiSolidLink } from "solid-icons/hi";
 import { VsFileSymlinkFile } from "solid-icons/vs";
 import { VsFile, VsFolder, VsTrash, VsEdit } from "solid-icons/vs";
 import { DirEntry, Directory, File, FileType } from "../types/DirEntry";
@@ -7,10 +6,7 @@ import ExecuteItem from "./folder/ExecuteItem";
 
 export default function (props: { data: DirEntry }) {
     return (
-        <ExecuteItem
-            type={props.data.type}
-            abosultePath={props.data.path}
-        >
+        <ExecuteItem type={props.data.type} abosultePath={props.data.path}>
             {(handler) => (
                 <tr class="group p-0 hover:bg-base-200">
                     <td
@@ -32,7 +28,6 @@ export default function (props: { data: DirEntry }) {
                         </Switch>
                         {props.data.name}
                     </td>
-                    {/* <td>{props.data.type}</td> */}
                     <td class="w-32 min-w-max">
                         <Show
                             when={

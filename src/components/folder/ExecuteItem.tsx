@@ -7,7 +7,7 @@ export default function (props: {
     children: (onDblClick: () => void) => JSX.Element;
     abosultePath: string;
     disabled?: boolean;
-    type: FileType
+    type: FileType;
 }) {
     let _props = mergeProps({ disabled: false }, props);
 
@@ -16,10 +16,10 @@ export default function (props: {
             switch (_props.type) {
                 case FileType.Directory:
                     setPath(_props.abosultePath);
-                    break
+                    break;
                 case FileType.File:
-                    invoke("open_file", { path: _props.abosultePath })
-                    break
+                    invoke("open_file", { path: _props.abosultePath });
+                    break;
             }
         }
     }

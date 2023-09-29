@@ -1,18 +1,14 @@
-import { invoke } from "@tauri-apps/api";
 import {
     For,
     Match,
-    Show,
     Switch,
     createEffect,
     createSignal,
-    onCleanup,
     onMount,
 } from "solid-js";
-import GoToFolder from "../folder/ExecuteItem";
 import { Disk, fetchDisks } from "../../types/Disk";
 import { BsUsbDrive } from "solid-icons/bs";
-import { FaRegularHardDrive } from 'solid-icons/fa'
+import { FaRegularHardDrive } from "solid-icons/fa";
 import { twMerge } from "tailwind-merge";
 import ExecuteItem from "../folder/ExecuteItem";
 import { FileType } from "../../types/DirEntry";
@@ -20,34 +16,12 @@ import { FileType } from "../../types/DirEntry";
 export default function () {
     const [disks, setDisks] = createSignal<Disk[]>();
 
-    /* const timer = setInterval(() => {
-        fetchDisks().then(setDisks);
-    }, 2000);
-    onCleanup(() => clearInterval(timer)); */
-
     createEffect(() => {
         console.log("disks", disks());
     });
     onMount(() => {
         fetchDisks().then(setDisks);
-    })
-
-    {
-        /* <div
-                                onDblClick={onDblClick}
-                                class="card flex flex-row items-center justify-between bg-base-200 p-3"
-                            >
-                                <div class="text-sm">Disk A</div>
-                                <div class="text-sm">10%</div>
-                                <div
-                                    class="radial-progress"
-                                    style={{
-                                        "--value": 70,
-                                        "--size": "1.8rem",
-                                    }}
-                                ></div>
-                            </div> */
-    }
+    });
 
     return (
         <>
@@ -65,36 +39,45 @@ export default function () {
                                 disk.availableSpaceInBytes.bytes /
                                 disk.totalSpaceInBytes.bytes;
                             if (perc < dangerTrashold) {
-                                style = "text-red-600 group-hover:text-error-content transition-colors duration-200";
+                                style =
+                                    "text-red-600 group-hover:text-error-content transition-colors duration-200";
                             } else if (perc < warningTrashold) {
                                 style = "text-yellow-600";
                             }
 
                             return (
-                                <ExecuteItem abosultePath={disk.mountPoint} type={FileType.Directory}>
+                                <ExecuteItem
+                                    abosultePath={disk.mountPoint}
+                                    type={FileType.Directory}
+                                >
                                     {(handler) => (
                                         <div
                                             onDblClick={handler}
-                                            class="group transition-all duration-200 hover:point hover:bg-base-content border-1 flex flex-col rounded-xl border border-base-content px-3 py-2"
+                                            class="hover:point border-1 group flex flex-col rounded-xl border border-base-content px-3 py-2 transition-all duration-200 hover:bg-base-content"
                                         >
-                                            <div class="text-xs font-bold group-hover:text-base-100 transition-colors duration-200">
+                                            <div class="text-xs font-bold transition-colors duration-200 group-hover:text-base-100">
                                                 {disk.name}{" "}
-                                                {/* <span class="ml-0.5 font-mono text-accent group-hover:text-error-content transition-colors duration-200">
-                                                        {disk.mountPoint}
-                                                    </span> */}
                                             </div>
                                             <div class="flex flex-row items-center">
                                                 <div class="flex flex-col justify-between">
                                                     <Switch>
-                                                        <Match when={disk.removable}>
+                                                        <Match
+                                                            when={
+                                                                disk.removable
+                                                            }
+                                                        >
                                                             <BsUsbDrive
-                                                                class="group-hover:fill-base-100 transition-colors duration-200"
+                                                                class="transition-colors duration-200 group-hover:fill-base-100"
                                                                 size={28}
                                                             />
                                                         </Match>
-                                                        <Match when={!disk.removable}>
+                                                        <Match
+                                                            when={
+                                                                !disk.removable
+                                                            }
+                                                        >
                                                             <FaRegularHardDrive
-                                                                class="group-hover:fill-base-100 transition-colors duration-200"
+                                                                class="transition-colors duration-200 group-hover:fill-base-100"
                                                                 size={28}
                                                             />
                                                         </Match>
@@ -104,17 +87,21 @@ export default function () {
                                                     <div
                                                         class={twMerge(
                                                             style,
-                                                            "text-md font-bold group-hover:text-error-content transition-colors duration-200",
+                                                            "text-md font-bold transition-colors duration-200 group-hover:text-error-content",
                                                         )}
                                                     >
-                                                        {disk.totalSpaceInBytes.sub(disk.availableSpaceInBytes).toString()}
+                                                        {disk.totalSpaceInBytes
+                                                            .sub(
+                                                                disk.availableSpaceInBytes,
+                                                            )
+                                                            .toString()}
                                                     </div>
-                                                    <div class="text-xs font-bold group-hover:text-base-100 transition-colors duration-200">
+                                                    <div class="text-xs font-bold transition-colors duration-200 group-hover:text-base-100">
                                                         {disk.totalSpaceInBytes.toString()}
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="text-xs font-mono text-info group-hover:text-error-content transition-colors duration-200">
+                                            <div class="font-mono text-xs text-info transition-colors duration-200 group-hover:text-error-content">
                                                 {disk.mountPoint}
                                             </div>
                                         </div>
