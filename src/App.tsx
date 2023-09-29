@@ -5,7 +5,7 @@ import { FilesProvider } from "./contexts/FilesProvider";
 
 export default function () {
     return (
-        <div class="flex h-screen max-h-screen flex-col select-none">
+        <div class="flex h-screen max-h-screen select-none flex-col">
             <FilesProvider>
                 <Navbar />
                 <div class="flex flex-row overflow-clip">

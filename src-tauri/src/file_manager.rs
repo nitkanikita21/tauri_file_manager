@@ -1,10 +1,11 @@
 use std::{
-    ffi::OsString,
-    fs::{self, DirEntry, File},
-    io,
+    fs, io,
     path::{Path, PathBuf},
     time::SystemTime,
 };
+use sysinfo::{DiskExt, SystemExt};
+
+use crate::SYSTEM_INFO;
 
 #[derive(Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
@@ -35,6 +36,7 @@ pub enum FileInfo {
         path: PathBuf,
     },
 }
+
 impl TryFrom<std::fs::DirEntry> for FileInfo {
     type Error = io::Error;
     fn try_from(value: std::fs::DirEntry) -> Result<Self, Self::Error> {
@@ -67,29 +69,38 @@ impl TryFrom<std::fs::DirEntry> for FileInfo {
     }
 }
 
-fn get_symlink_target() {}
-
-#[derive(Debug, Default)]
-pub struct FileManager {
-    current_path: Option<PathBuf>,
+#[derive(Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Disk {
+    name: String,
+    mount_point: PathBuf,
+    available_space_in_bytes: u64,
+    total_space_in_bytes: u64,
+    removable: bool
 }
+
+#[derive(Debug)]
+pub struct FileManager;
+
 impl FileManager {
-    pub fn get_current_path(&self) -> Option<&Path> {
-        self.current_path.as_deref()
-    }
-    pub fn set_current_path(&mut self, path: Option<PathBuf>) {
-        self.current_path = path
-    }
-    pub fn get_files(&self) -> Option<io::Result<Vec<FileInfo>>> {
-        self.current_path.as_deref().map(|pass| {
-            fs::read_dir(pass)?
-                .into_iter()
-                .map(|entry| entry?.try_into())
-                .collect()
-        })
+    pub fn get_files(path: impl AsRef<Path>) -> io::Result<Vec<FileInfo>> {
+        fs::read_dir(path)?
+            .into_iter()
+            .map(|entry| FileInfo::try_from(entry?).map_err(Into::into))
+            .collect()
     }
 
-    pub const fn new() -> Self {
-        Self { current_path: None }
+    pub async fn get_disks() -> Vec<Disk> {
+        let mut sys = SYSTEM_INFO.lock().await;
+        sys.refresh_disks();
+        sys.disks().iter().map(|disk| {
+            Disk {
+                mount_point: disk.mount_point().to_path_buf(),
+                available_space_in_bytes: disk.available_space(),
+                total_space_in_bytes: disk.total_space(),
+                removable: disk.is_removable(),
+                name: disk.name().to_string_lossy().into_owned()
+            }
+        }).collect()
     }
 }

@@ -1,5 +1,3 @@
-import { invoke } from "@tauri-apps/api";
-import { createEffect, createSignal, onCleanup, useContext } from "solid-js";
 import {
     VsArrowUp,
     VsArrowLeft,
@@ -7,23 +5,23 @@ import {
     VsRefresh,
 } from "solid-icons/vs";
 import { twMerge, ClassNameValue } from "tailwind-merge";
-import { FilesContext } from "../../contexts/FilesProvider";
+import filesStore, { reload, setPath } from "../../stores/filesStore";
+import { onCleanup, onMount } from "solid-js";
+import { invoke } from "@tauri-apps/api";
 
 export default function (props: { class: ClassNameValue }) {
-    const [files, reload] = useContext(FilesContext)!;
-    const [path, setPath] = createSignal<string>("");
-
-    createEffect(() => {
-        invoke<string>("get_path").then((v) => setPath(v));
-    });
-    
-    function onChange() {
-        invoke("set_path", { path: path() })
-        .then(reload)
-    }
-
-    let timer = setInterval(() => reload(null), 1000);
+    const timer = setInterval(reload, 3000); // reload file list every 1 second
     onCleanup(() => clearInterval(timer));
+
+    onMount(()=>{
+        invoke<string>("get_cwd_path").then(setPath)
+    })
+
+    function goToParent() {
+        invoke<string>("get_parent", { path: filesStore.path }).then(
+            (parentPath) => setPath(parentPath),
+        );
+    }
 
     return (
         <div class={twMerge("join", props.class)}>
@@ -33,17 +31,19 @@ export default function (props: { class: ClassNameValue }) {
             <button class="btn btn-outline join-item btn-sm">
                 <VsArrowRight />
             </button>
-            <button class="btn btn-outline join-item btn-sm">
+            <button
+                onClick={goToParent}
+                class="btn btn-outline join-item btn-sm"
+            >
                 <VsArrowUp />
             </button>
             <input
                 type="text"
                 placeholder="Type command or path here"
                 class="input join-item input-bordered input-sm w-full border-base-content"
-                value={path()}
+                value={filesStore.path}
                 onChange={(e) => {
-                    setPath(e.target.value)
-                    onChange()
+                    setPath(e.target.value);
                 }}
             />
             <button class="btn btn-outline join-item btn-sm" onClick={reload}>

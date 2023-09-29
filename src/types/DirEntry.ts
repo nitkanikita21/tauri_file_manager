@@ -13,6 +13,25 @@ export class FileSize {
     get tib(): number {
         return this.gib / 1024;
     }
+
+    toString(): string {
+        switch (true) {
+            case this.tib > 1:
+                return `${Math.round(this.tib * 100) / 100} TiB`;
+            case this.gib > 1:
+                return `${Math.round(this.gib * 100) / 100} GiB`;
+            case this.mib > 1:
+                return `${Math.round(this.mib * 100) / 100} MiB`;
+            case this.kib > 1:
+                return `${Math.round(this.kib * 100) / 100} KiB`;
+            default:
+                return `${this.bytes} B`;
+        }
+    }
+
+    sub(fileSize: FileSize): FileSize {
+        return new FileSize(this.bytes - fileSize.bytes);
+    }
 }
 
 export enum FileType {

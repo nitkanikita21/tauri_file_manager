@@ -1,10 +1,10 @@
 [package]
-name = "tauri-fm-2"
-version = "0.0.0"
-description = "A Tauri App"
-authors = ["you"]
-license = ""
-repository = ""
+name = "file_manager"
+version = "0.0.1"
+description = "Simple fast File Manager"
+authors = ["nitkanikita21", "DanikVitek"]
+license = "GPLv3"
+repository = "none"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -19,7 +19,9 @@ tauri = { version = "1.4.0", features = [ "window-unmaximize", "window-maximize"
 tokio = { version = "1.32.0", features = ["sync", "full"] }
 lazy_static = "1.4.0"
 humantime-serde = "1.1.1"
-sysinfo = "0.29.10"
+sysinfo = { version = "0.29.10", features = ["serde"] }
+color-eyre = "0.6.2"
+open = "5.0.0"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

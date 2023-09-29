@@ -1,26 +1,30 @@
-use std::{ffi::OsString, path::PathBuf};
+use std::path::PathBuf;
 
-use crate::{file_manager::FileInfo, FILE_NAMAGER};
+
+use crate::{file_manager::{FileInfo, FileManager}, utils::Infallible};
 
 #[tauri::command]
-pub async fn get_files() -> Result<Option<Vec<FileInfo>>, String> {
-    match FILE_NAMAGER.lock().await.get_files() {
-        Some(files) => Ok(Some(files.map_err(|err| err.to_string())?)),
-        None => Ok(None),
-    }
+pub async fn get_files(path: PathBuf) -> Result<Vec<FileInfo>, String> {
+    FileManager::get_files(path).map_err(|err| err.to_string())
 }
 
 #[tauri::command]
-pub async fn get_path() -> Result<Option<PathBuf>, String> {
-    Ok(FILE_NAMAGER.lock().await.get_current_path().map(ToOwned::to_owned))
+pub async fn get_cwd_path() -> Result<PathBuf, String> {
+    std::env::current_dir()
+        .map_err(|err| err.to_string())
 }
 
-#[tauri::command(rename_all = "snake_case")]
-pub async fn set_path(path: Option<String>) {
-    let mut fm = FILE_NAMAGER.lock().await;
-    if let Some(p) = path {
-        fm.set_current_path(Some(PathBuf::from(p)))
+#[tauri::command]
+pub async fn get_parent(path: PathBuf) -> Result<Option<PathBuf>, Infallible> {
+    Ok(path.parent().map(ToOwned::to_owned))
+}
+
+#[tauri::command]
+pub fn open_file(path: PathBuf, byProgram: Option<String>) -> Result<(), String> {
+    if let Some(by) = byProgram {
+        open::with(path, by).map_err(|err| err.to_string())?
     } else {
-        fm.set_current_path(None)
+        open::that(path).map_err(|err| err.to_string())?
     }
+    Ok(())
 }
