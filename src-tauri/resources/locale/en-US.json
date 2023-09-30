@@ -1,0 +1,8 @@
+{
+    "path.placeholder": "Enter path",
+    "disks.disks": "*",
+    "files.name": "*",
+    "files.createdAt": "*",
+    "files.modifiedAt": "*",
+    "files.size": "*"
+}

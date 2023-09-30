@@ -3,8 +3,11 @@ import { For, createResource } from "solid-js";
 import { DirEntry, FileSize, FileType } from "../types/DirEntry";
 import FolderItem from "./FolderItem";
 import filesStore from "../stores/filesStore";
+import { fallbackLocaleId, locale, setLocaleId } from "../stores/translationStore";
 
 export default function () {
+    setLocaleId(fallbackLocaleId);
+
     const [files] = createResource<
         DirEntry[],
         [string, typeof filesStore.reload]
@@ -45,10 +48,10 @@ export default function () {
                 <table class="table table-pin-rows table-xs w-full">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Created At</th>
-                            <th>Modified At</th>
-                            <th>Size</th>
+                            <th>{locale()?.["files.name"]}</th>
+                            <th>{locale()?.["files.createdAt"]}</th>
+                            <th>{locale()?.["files.modifiedAt"]}</th>
+                            <th>{locale()?.["files.size"]}</th>
                             <th></th>
                         </tr>
                     </thead>

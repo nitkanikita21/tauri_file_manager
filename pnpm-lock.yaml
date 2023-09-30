@@ -1,10 +1,9 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 dependencies:
+  '@solid-primitives/i18n':
+    specifier: ^2.0.0
+    version: 2.0.0(solid-js@1.7.12)
   '@solidjs/router':
     specifier: ^0.8.3
     version: 0.8.3(solid-js@1.7.12)
@@ -630,6 +629,14 @@ packages:
     dependencies:
       '@nodelib/fs.scandir': 2.1.5
       fastq: 1.15.0
+    dev: false
+
+  /@solid-primitives/i18n@2.0.0(solid-js@1.7.12):
+    resolution: {integrity: sha512-2sfhiUGl3eCPrDnPpQapbKnZ2iVo1IY6aI5vJTozc2fIf/yEM2+LlCY4PwQTf8vkM5B0Pf3jA+7vC70fR6xbmg==}
+    peerDependencies:
+      solid-js: ^1.6.12
+    dependencies:
+      solid-js: 1.7.12
     dev: false
 
   /@solidjs/router@0.8.3(solid-js@1.7.12):
@@ -1709,3 +1716,7 @@ packages:
     resolution: {integrity: sha512-N/lyzTPaJasoDmfV7YTrYCI0G/3ivm/9wdG0aHuheKowWQwGTsK0Eoiw6utmzAnI6pkJa0DUVygvp3spqqEKXg==}
     engines: {node: '>= 14'}
     dev: false
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
