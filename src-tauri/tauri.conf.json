@@ -7,8 +7,8 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "file_manager",
-    "version": "0.0.1"
+    "productName": "File Manager",
+    "version": "0.0.3"
   },
   "tauri": {
     "allowlist": {
@@ -28,7 +28,7 @@
     "bundle": {
       "active": true,
       "targets": "all",
-      "identifier": "FileManager",
+      "identifier": "io.dvnn.tauri-file-manager",
       "icon": [
         "icons/icon.png",
         "icons/icon.ico"

@@ -6,8 +6,7 @@ use file_manager::FileManager;
 pub mod commands;
 pub mod file_manager;
 
-#[tokio::main]
-async fn main() {
+fn main() {
     tauri::Builder::default()
         .manage(FileManager::default())
         .invoke_handler(tauri::generate_handler![

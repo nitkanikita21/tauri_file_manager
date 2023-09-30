@@ -13,6 +13,7 @@ pub fn get_cwd_path() -> Result<PathBuf, String> {
 }
 
 #[tauri::command]
+#[inline(always)]
 pub fn get_parent(path: &Path) -> Option<&Path> {
     path.parent()
 }

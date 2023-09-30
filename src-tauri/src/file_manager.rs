@@ -11,25 +11,27 @@ use sysinfo::{DiskExt, System, SystemExt};
 #[derive(Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
 pub enum FileInfo {
+    #[serde(rename_all = "camelCase")]
     File {
         name: String,
         path: PathBuf,
         size: u64,
-        #[serde(with = "humantime_serde", rename = "createdAt")]
+        #[serde(with = "humantime_serde")]
         created_at: SystemTime,
-        #[serde(with = "humantime_serde", rename = "modifiedAt")]
+        #[serde(with = "humantime_serde")]
         modified_at: SystemTime,
-        #[serde(with = "humantime_serde", rename = "lastAccessed")]
+        #[serde(with = "humantime_serde")]
         last_accessed: SystemTime,
     },
+    #[serde(rename_all = "camelCase")]
     Directory {
         name: String,
         path: PathBuf,
-        #[serde(with = "humantime_serde", rename = "createdAt")]
+        #[serde(with = "humantime_serde")]
         created_at: SystemTime,
-        #[serde(with = "humantime_serde", rename = "modifiedAt")]
+        #[serde(with = "humantime_serde")]
         modified_at: SystemTime,
-        #[serde(with = "humantime_serde", rename = "lastAccessed")]
+        #[serde(with = "humantime_serde")]
         last_accessed: SystemTime,
     },
     Symlink {
@@ -105,6 +107,18 @@ pub struct Disk {
     removable: bool,
 }
 
+impl From<&sysinfo::Disk> for Disk {
+    fn from(disk: &sysinfo::Disk) -> Self {
+        Self {
+            mount_point: disk.mount_point().to_path_buf(),
+            available_space_in_bytes: disk.available_space(),
+            total_space_in_bytes: disk.total_space(),
+            removable: disk.is_removable(),
+            name: disk.name().to_string_lossy().into_owned(),
+        }
+    }
+}
+
 #[derive(Debug)]
 pub struct FileManager {
     system_info: Mutex<System>,
@@ -135,15 +149,6 @@ impl FileManager {
     pub fn get_disks(&self) -> Vec<Disk> {
         let mut sys = self.system_info.lock().unwrap();
         sys.refresh_disks();
-        sys.disks()
-            .iter()
-            .map(|disk| Disk {
-                mount_point: disk.mount_point().to_path_buf(),
-                available_space_in_bytes: disk.available_space(),
-                total_space_in_bytes: disk.total_space(),
-                removable: disk.is_removable(),
-                name: disk.name().to_string_lossy().into_owned(),
-            })
-            .collect()
+        sys.disks().iter().map(Disk::from).collect()
     }
 }
