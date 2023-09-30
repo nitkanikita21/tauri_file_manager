@@ -3,6 +3,7 @@ import { BaseDirectory } from "@tauri-apps/api/fs";
 import { createResource, createSignal } from "solid-js";
 
 export interface Translation {
+    "path.placeholder": string
     "disks.disks": string;
     "files.name": string;
     "files.createdAt": string;
