@@ -1,28 +1,28 @@
-import { JSX, children, createSignal, mergeProps, onCleanup } from "solid-js";
-import filesStore, { setPath } from "../../stores/filesStore";
+import { JSX, mergeProps } from "solid-js";
+import { setPath } from "../../stores/filesStore";
 import { FileType } from "../../types/DirEntry";
 import { invoke } from "@tauri-apps/api";
 
 export default function (props: {
-    children: (onDblClick: () => void) => JSX.Element;
-    abosultePath: string;
+    children: (open: () => void) => JSX.Element;
+    absolutePath: string;
     disabled?: boolean;
     type: FileType;
 }) {
     let _props = mergeProps({ disabled: false }, props);
 
-    function click() {
+    function open() {
         if (!_props.disabled) {
             switch (_props.type) {
                 case FileType.Directory:
-                    setPath(_props.abosultePath);
+                    setPath(_props.absolutePath);
                     break;
                 case FileType.File:
-                    invoke("open_file", { path: _props.abosultePath });
+                    invoke("open_file", { path: _props.absolutePath });
                     break;
             }
         }
     }
 
-    return _props.children(click);
+    return _props.children(open);
 }

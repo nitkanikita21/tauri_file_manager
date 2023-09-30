@@ -1,16 +1,16 @@
 import { VsFileSymlinkFile } from "solid-icons/vs";
-import { VsFile, VsFolder, VsTrash, VsEdit } from "solid-icons/vs";
+import { VsFile, VsFolder, VsTrash } from "solid-icons/vs";
 import { DirEntry, Directory, File, FileType } from "../types/DirEntry";
 import { Match, Show, Switch } from "solid-js";
-import ExecuteItem from "./folder/ExecuteItem";
+import OpenItem from "./folder/OpenItem";
 
 export default function (props: { data: DirEntry }) {
     return (
-        <ExecuteItem type={props.data.type} abosultePath={props.data.path}>
-            {(handler) => (
+        <OpenItem type={props.data.type} absolutePath={props.data.path}>
+            {(open) => (
                 <tr class="group p-0 hover:bg-base-200">
                     <td
-                        onDblClick={handler}
+                        onDblClick={open}
                         class="flex h-full min-w-max flex-row items-center group-hover:fill-neutral-content group-hover:text-neutral-content"
                     >
                         <Switch>
@@ -69,6 +69,6 @@ export default function (props: { data: DirEntry }) {
                     </td>
                 </tr>
             )}
-        </ExecuteItem>
+        </OpenItem>
     );
 }
