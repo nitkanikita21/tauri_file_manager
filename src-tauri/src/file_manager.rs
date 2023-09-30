@@ -34,10 +34,10 @@ pub enum FileInfo {
         #[serde(with = "humantime_serde")]
         last_accessed: SystemTime,
     },
+    #[serde(rename_all = "camelCase")]
     Symlink {
         name: String,
         path: PathBuf,
-        #[serde(rename = "camelCase")]
         link_type: SymlinkType,
     },
 }

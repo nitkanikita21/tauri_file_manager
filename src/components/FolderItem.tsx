@@ -12,6 +12,7 @@ import { Match, Show, Switch } from "solid-js";
 import OpenItem from "./folder/OpenItem";
 
 export default function (props: { data: DirEntry }) {
+    console.log(props.data);
     return (
         <OpenItem
             type={props.data.type}
@@ -30,33 +31,27 @@ export default function (props: { data: DirEntry }) {
                             >
                                 <VsFolder size={24} class="mr-2" />
                             </Match>
-                            <Match when={props.data.type === FileType.Symlink}>
-                                <Switch>
-                                    <Match
-                                        when={
-                                            (props.data as Symlink).linkType ===
-                                                SymlinkType.File ||
-                                            (props.data as Symlink).linkType ===
-                                                SymlinkType.Unknown
-                                        }
-                                    >
-                                        <VsFileSymlinkFile
-                                            size={24}
-                                            class="mr-2"
-                                        />
-                                    </Match>
-                                    <Match
-                                        when={
-                                            (props.data as Symlink).linkType ===
-                                            SymlinkType.Directory
-                                        }
-                                    >
-                                        <VsFileSymlinkDirectory
-                                            size={24}
-                                            class="mr-2"
-                                        />
-                                    </Match>
-                                </Switch>
+                            <Match
+                                when={
+                                    props.data.type === FileType.Symlink &&
+                                    (props.data.linkType === SymlinkType.File ||
+                                        props.data.linkType ===
+                                            SymlinkType.Unknown)
+                                }
+                            >
+                                <VsFileSymlinkFile size={24} class="mr-2" />
+                            </Match>
+                            <Match
+                                when={
+                                    props.data.type === FileType.Symlink &&
+                                    props.data.linkType ===
+                                        SymlinkType.Directory
+                                }
+                            >
+                                <VsFileSymlinkDirectory
+                                    size={24}
+                                    class="mr-2"
+                                />
                             </Match>
                             <Match when={props.data.type === FileType.File}>
                                 <VsFile size={24} class="mr-2" />
