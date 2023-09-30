@@ -30,6 +30,12 @@ sysinfo = "0.29.10"
 # color-eyre = "0.6.2"
 open = "5.0.0"
 
+[profile.release]
+opt-level = 3
+lto = true
+strip = true
+codegen-units = 1
+
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
 # DO NOT REMOVE!!

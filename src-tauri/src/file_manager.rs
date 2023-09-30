@@ -8,7 +8,7 @@ use std::{
 
 use sysinfo::{DiskExt, System, SystemExt};
 
-#[derive(Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, PartialEq, Eq, serde::Serialize)]
 #[serde(tag = "type")]
 pub enum FileInfo {
     #[serde(rename_all = "camelCase")]
@@ -97,7 +97,7 @@ impl Ord for FileInfo {
     }
 }
 
-#[derive(Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, serde::Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Disk {
     name: String,
