@@ -1,6 +1,6 @@
 import { JSX, mergeProps } from "solid-js";
 import { setPath } from "../../stores/filesStore";
-import { FileType } from "../../types/DirEntry";
+import { FileType, SymlinkType } from "../../types/DirEntry";
 import { invoke } from "@tauri-apps/api";
 
 export default function (props: {
@@ -8,6 +8,7 @@ export default function (props: {
     absolutePath: string;
     disabled?: boolean;
     type: FileType;
+    linkType?: SymlinkType;
 }) {
     let _props = mergeProps({ disabled: false }, props);
 
@@ -20,6 +21,15 @@ export default function (props: {
                 case FileType.File:
                     invoke("open_file", { path: _props.absolutePath });
                     break;
+                case FileType.Symlink:
+                    switch (_props.linkType) {
+                        case SymlinkType.Directory:
+                            setPath(_props.absolutePath);
+                            break;
+                        case SymlinkType.File:
+                            invoke("open_file", { path: _props.absolutePath });
+                            break;
+                    }
             }
         }
     }
