@@ -14,7 +14,7 @@ export default function (props: { class: ClassNameValue }) {
     onCleanup(() => clearInterval(timer));
 
     onMount(() => {
-        path.appConfigDir().then(setPath)
+        path.appConfigDir().then(setPath);
     });
 
     function goToParent() {
