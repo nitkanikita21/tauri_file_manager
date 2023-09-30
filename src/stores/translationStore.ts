@@ -3,7 +3,7 @@ import { BaseDirectory } from "@tauri-apps/api/fs";
 import { createResource, createSignal } from "solid-js";
 
 export interface Translation {
-    "path.placeholder": string
+    "path.placeholder": string;
     "disks.disks": string;
     "files.name": string;
     "files.createdAt": string;
@@ -19,13 +19,12 @@ export const [localeId, setLocaleId] = createSignal(fallbackLocaleId);
 export const [locale] = createResource<Translation, string>(
     localeId,
     async (localeId, {}) => {
-        console.log("app config path", await path.appConfigDir())
+        console.log("app config path", await path.appConfigDir());
 
-        const configDirExitst = await fs.exists(await path.appConfigDir());
-        if(!configDirExitst) {
-            fs.createDir(await path.appConfigDir())
+        const configDirExists = await fs.exists(await path.appConfigDir());
+        if (!configDirExists) {
+            fs.createDir(await path.appConfigDir());
         }
-        
 
         const localeDirExists = await fs.exists("locales", {
             dir: BaseDirectory.AppConfig,
