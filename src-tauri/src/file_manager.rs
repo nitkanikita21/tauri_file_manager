@@ -34,20 +34,32 @@ pub enum FileInfo {
         #[serde(with = "humantime_serde")]
         last_accessed: SystemTime,
     },
+    #[serde(rename_all = "camelCase")]
     Symlink {
         name: String,
         path: PathBuf,
+        link_type: SymlinkType,
     },
+}
+
+#[derive(Clone, PartialEq, Eq, serde::Serialize)]
+pub enum SymlinkType {
+    File,
+    Directory,
+    Unknown,
 }
 
 impl TryFrom<std::fs::DirEntry> for FileInfo {
     type Error = io::Error;
+
     fn try_from(value: std::fs::DirEntry) -> Result<Self, Self::Error> {
         let file_type = value.file_type()?;
+        let name = value.file_name().to_string_lossy().into_owned();
+        let path = value.path();
         let file_info = if file_type.is_file() {
             Self::File {
-                name: value.file_name().to_string_lossy().into_owned(),
-                path: value.path(),
+                name,
+                path,
                 size: value.metadata()?.len(),
                 created_at: value.metadata()?.created()?,
                 modified_at: value.metadata()?.modified()?,
@@ -55,16 +67,29 @@ impl TryFrom<std::fs::DirEntry> for FileInfo {
             }
         } else if file_type.is_dir() {
             Self::Directory {
-                name: value.file_name().to_string_lossy().into_owned(),
-                path: value.path(),
+                name,
+                path,
                 created_at: value.metadata()?.created()?,
                 modified_at: value.metadata()?.modified()?,
                 last_accessed: value.metadata()?.accessed()?,
             }
         } else if file_type.is_symlink() {
+            let mut leads_to = dbg!(fs::read_link(path)?);
+            while leads_to.is_symlink() {
+                leads_to = dbg!(fs::read_link(leads_to)?);
+            }
+            let leads_to = dbg!(leads_to);
+            let link_type = if leads_to.is_file() {
+                SymlinkType::File
+            } else if leads_to.is_dir() {
+                SymlinkType::Directory
+            } else {
+                SymlinkType::Unknown
+            };
             Self::Symlink {
-                name: value.file_name().to_string_lossy().into_owned(),
-                path: value.path(),
+                name,
+                path: leads_to,
+                link_type,
             }
         } else {
             unreachable!()
@@ -138,7 +163,12 @@ impl FileManager {
         }
     }
 
+    #[inline(always)]
     pub fn get_files(path: impl AsRef<Path>) -> io::Result<Vec<FileInfo>> {
+        Self::_get_files(path.as_ref())
+    }
+
+    fn _get_files(path: &Path) -> io::Result<Vec<FileInfo>> {
         let mut files: Vec<FileInfo> = fs::read_dir(path)?
             .map(|entry| FileInfo::try_from(entry?).map_err(Into::into))
             .collect::<io::Result<_>>()?;
