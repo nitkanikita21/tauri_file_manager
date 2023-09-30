@@ -1,9 +1,8 @@
-use crate::{
-    file_manager::{Disk, FileManager},
-    infallible::Infallible,
-};
+use tauri::State;
+
+use crate::file_manager::{Disk, FileManager};
 
 #[tauri::command]
-pub fn get_disks() -> Result<Vec<Disk>, Infallible> {
-    Ok(FileManager::get_disks())
+pub fn get_disks(fm: State<'_, FileManager>) -> Vec<Disk> {
+    fm.get_disks()
 }

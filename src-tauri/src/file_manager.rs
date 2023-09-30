@@ -2,11 +2,11 @@ use std::{
     cmp::Ordering,
     fs, io,
     path::{Path, PathBuf},
+    sync::Mutex,
     time::SystemTime,
 };
-use sysinfo::{DiskExt, SystemExt};
 
-use crate::SYSTEM_INFO;
+use sysinfo::{DiskExt, System, SystemExt};
 
 #[derive(Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 #[serde(tag = "type")]
@@ -106,9 +106,24 @@ pub struct Disk {
 }
 
 #[derive(Debug)]
-pub struct FileManager;
+pub struct FileManager {
+    system_info: Mutex<System>,
+}
+
+impl Default for FileManager {
+    #[inline(always)]
+    fn default() -> Self {
+        Self::new()
+    }
+}
 
 impl FileManager {
+    pub fn new() -> Self {
+        Self {
+            system_info: Mutex::new(System::new_all()),
+        }
+    }
+
     pub fn get_files(path: impl AsRef<Path>) -> io::Result<Vec<FileInfo>> {
         let mut files: Vec<FileInfo> = fs::read_dir(path)?
             .map(|entry| FileInfo::try_from(entry?).map_err(Into::into))
@@ -117,8 +132,8 @@ impl FileManager {
         Ok(files)
     }
 
-    pub fn get_disks() -> Vec<Disk> {
-        let mut sys = SYSTEM_INFO.lock().unwrap();
+    pub fn get_disks(&self) -> Vec<Disk> {
+        let mut sys = self.system_info.lock().unwrap();
         sys.refresh_disks();
         sys.disks()
             .iter()
