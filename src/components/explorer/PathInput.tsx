@@ -8,6 +8,7 @@ import { twMerge, ClassNameValue } from "tailwind-merge";
 import filesStore, { reload, setPath } from "../../stores/filesStore";
 import { onCleanup, onMount } from "solid-js";
 import { invoke, path } from "@tauri-apps/api";
+import { locale } from "../../stores/translationStore";
 
 export default function (props: { class: ClassNameValue }) {
     const timer = setInterval(reload, 3000); // reload file list every 1 second
@@ -39,7 +40,7 @@ export default function (props: { class: ClassNameValue }) {
             </button>
             <input
                 type="text"
-                placeholder="Type command or path here"
+                placeholder={locale()?.["path.placeholder"]}
                 class="input join-item input-bordered input-sm w-full border-base-content"
                 value={filesStore.path}
                 onChange={(e) => {

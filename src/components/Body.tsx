@@ -3,9 +3,11 @@ import { For, createEffect, createSignal } from "solid-js";
 import { DirEntry, FileSize, FileType } from "../types/DirEntry";
 import FolderItem from "./FolderItem";
 import filesStore from "../stores/filesStore";
+import { fallbackLocaleId, locale, setLocaleId } from "../stores/translationStore";
 
 export default function () {
     const [files, setFiles] = createSignal<DirEntry[]>([]);
+    setLocaleId(fallbackLocaleId)
 
     createEffect(() => {
         invoke<DirEntry[]>("get_files", { path: filesStore.path })
@@ -42,10 +44,10 @@ export default function () {
                 <table class="table table-pin-rows table-xs w-full">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            <th>Created At</th>
-                            <th>Modified At</th>
-                            <th>Size</th>
+                            <th>{locale()?.["files.name"]}</th>
+                            <th>{locale()?.["files.createdAt"]}</th>
+                            <th>{locale()?.["files.modifiedAt"]}</th>
+                            <th>{locale()?.["files.size"]}</th>
                             <th></th>
                         </tr>
                     </thead>

@@ -22,7 +22,7 @@
       },
       "fs":{
         "all": true,
-        "scope": ["$CONFIG/locale/*", "$RESOURCE/*"]
+        "scope": ["$APPCONFIG/*", "$RESOURCE/*"]
       },
       "os": {
         "all": true
