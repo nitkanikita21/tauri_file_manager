@@ -10,8 +10,8 @@ import { onCleanup, onMount } from "solid-js";
 import { invoke } from "@tauri-apps/api";
 
 export default function (props: { class: ClassNameValue }) {
-    const timer = setInterval(reload, 3000); // reload file list every 1 second
-    onCleanup(() => clearInterval(timer));
+    // const timer = setInterval(reload, 3000); // reload file list every 1 second
+    // onCleanup(() => clearInterval(timer));
 
     onMount(() => {
         invoke<string>("get_cwd_path").then(setPath);

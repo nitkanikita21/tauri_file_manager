@@ -1,41 +1,43 @@
 import { invoke } from "@tauri-apps/api";
-import { For, createEffect, createSignal } from "solid-js";
+import { For, createResource } from "solid-js";
 import { DirEntry, FileSize, FileType } from "../types/DirEntry";
 import FolderItem from "./FolderItem";
 import filesStore from "../stores/filesStore";
 
 export default function () {
-    const [files, setFiles] = createSignal<DirEntry[]>([]);
+    const [files] = createResource<
+        DirEntry[],
+        [string, typeof filesStore.reload]
+    >(
+        () => [filesStore.path, filesStore.reload],
+        async ([path], {}) => {
+            try {
+                const files = await invoke<DirEntry[]>("get_files", { path });
+                return files.map((file) => {
+                    if (file.type === FileType.File) {
+                        file.size = new FileSize((file as any).size as number);
+                    }
 
-    createEffect(() => {
-        filesStore.reload;
-        invoke<DirEntry[]>("get_files", { path: filesStore.path })
-            .then((files) => {
-                setFiles(
-                    files.map((file) => {
-                        if (file.type === FileType.File) {
-                            file.size = new FileSize(
-                                (file as any).size as number,
-                            );
-                        }
+                    if (
+                        file.type === FileType.Directory ||
+                        file.type === FileType.File
+                    ) {
+                        file.createdAt = new Date(file.createdAt);
+                        file.modifiedAt = new Date(file.modifiedAt);
+                        file.lastAccessed = new Date(file.lastAccessed);
 
-                        if (
-                            file.type === FileType.Directory ||
-                            file.type === FileType.File
-                        ) {
-                            file.createdAt = new Date(file.createdAt);
-                            file.modifiedAt = new Date(file.modifiedAt);
-                            file.lastAccessed = new Date(file.lastAccessed);
-
-                            return file;
-                        } else {
-                            return file;
-                        }
-                    }),
-                );
-            })
-            .catch(console.error);
-    });
+                        return file;
+                    } else {
+                        return file;
+                    }
+                });
+            } catch (error) {
+                console.error(error);
+                return [];
+            }
+        },
+        { initialValue: [] },
+    );
 
     return (
         <>
@@ -51,7 +53,7 @@ export default function () {
                         </tr>
                     </thead>
                     <tbody>
-                        <For each={files()} fallback={<></>}>
+                        <For each={files()}>
                             {(item) => <FolderItem data={item} />}
                         </For>
                     </tbody>

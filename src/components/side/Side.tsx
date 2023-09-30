@@ -10,8 +10,11 @@ import { Disk, fetchDisks } from "../../types/Disk";
 import { BsUsbDrive } from "solid-icons/bs";
 import { FaRegularHardDrive } from "solid-icons/fa";
 import { twMerge } from "tailwind-merge";
-import ExecuteItem from "../folder/ExecuteItem";
+import OpenItem from "../folder/OpenItem";
 import { FileType } from "../../types/DirEntry";
+
+const dangerThreshold = 0.35;
+const warningThreshold = 0.65;
 
 export default function () {
     const [disks, setDisks] = createSignal<Disk[]>();
@@ -29,30 +32,32 @@ export default function () {
                 <h1 class="mb-2 text-xl font-extrabold">Storages</h1>
 
                 <div class="grid grid-cols-1 gap-2 overflow-y-auto">
-                    <For each={disks()} fallback={<></>}>
+                    <For each={disks()}>
                         {(disk) => {
-                            let dangerTrashold = 1 - 0.65;
-                            let warningTrashold = 1 - 0.35;
-
-                            let style = "text-green-600";
-                            let perc =
+                            let percentage =
                                 disk.availableSpaceInBytes.bytes /
                                 disk.totalSpaceInBytes.bytes;
-                            if (perc < dangerTrashold) {
-                                style =
-                                    "text-red-600 group-hover:text-error-content transition-colors duration-200";
-                            } else if (perc < warningTrashold) {
-                                style = "text-yellow-600";
+                            let className: string;
+                            switch (true) {
+                                case percentage < dangerThreshold:
+                                    className = "text-error";
+                                    break;
+                                case percentage < warningThreshold:
+                                    className = "text-warning";
+                                    break;
+                                default:
+                                    className = "text-success";
+                                    break;
                             }
 
                             return (
-                                <ExecuteItem
-                                    abosultePath={disk.mountPoint}
+                                <OpenItem
+                                    absolutePath={disk.mountPoint}
                                     type={FileType.Directory}
                                 >
-                                    {(handler) => (
+                                    {(open) => (
                                         <div
-                                            onDblClick={handler}
+                                            onClick={open}
                                             class="hover:point border-1 group flex flex-col rounded-xl border border-base-content px-3 py-2 transition-all duration-200 hover:bg-base-content"
                                         >
                                             <div class="text-xs font-bold transition-colors duration-200 group-hover:text-base-100">
@@ -86,8 +91,8 @@ export default function () {
                                                 <div class="ml-3 flex flex-col">
                                                     <div
                                                         class={twMerge(
-                                                            style,
-                                                            "text-md font-bold transition-colors duration-200 group-hover:text-error-content",
+                                                            className,
+                                                            "text-md font-bold transition-colors duration-200 group-hover:text-primary-content",
                                                         )}
                                                     >
                                                         {disk.totalSpaceInBytes
@@ -106,7 +111,7 @@ export default function () {
                                             </div>
                                         </div>
                                     )}
-                                </ExecuteItem>
+                                </OpenItem>
                             );
                         }}
                     </For>

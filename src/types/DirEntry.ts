@@ -39,6 +39,11 @@ export enum FileType {
     Directory = "Directory",
     Symlink = "Symlink",
 }
+export enum SymlinkType {
+    File = "File",
+    Directory = "Directory",
+    Unknown = "Unknown",
+}
 
 export interface File {
     type: FileType.File;
@@ -61,5 +66,6 @@ export interface Symlink {
     type: FileType.Symlink;
     name: string;
     path: string;
+    linkType: SymlinkType;
 }
 export type DirEntry = File | Directory | Symlink;

@@ -1,12 +1,11 @@
-import { invoke } from "@tauri-apps/api";
 import { createStore } from "solid-js/store";
 
-export interface Store {
+export interface FilesStore {
     path: string;
     reload: boolean;
 }
 
-const [filesStore, setFilesStore] = createStore<Store>({
+const [filesStore, setFilesStore] = createStore<FilesStore>({
     path: "",
     reload: false,
 });
