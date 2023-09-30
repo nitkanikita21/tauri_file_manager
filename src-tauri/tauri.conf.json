@@ -22,7 +22,7 @@
       },
       "fs":{
         "all": true,
-        "scope": ["$CONFIG/locale/*", "$"]
+        "scope": ["$CONFIG/locale/*", "$RESOURCE/*"]
       },
       "os": {
         "all": true
@@ -42,6 +42,9 @@
       "icon": [
         "icons/icon.png",
         "icons/icon.ico"
+      ],
+      "resources":  [
+        "resources/*"
       ]
     },
     "security": {
