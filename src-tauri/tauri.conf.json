@@ -17,6 +17,16 @@
         "all": false,
         "open": true
       },
+      "path": {
+        "all": true
+      },
+      "fs":{
+        "all": true,
+        "scope": ["$CONFIG/locale/*", "$"]
+      },
+      "os": {
+        "all": true
+      },
       "window": {
         "startDragging": true,
         "minimize": true,

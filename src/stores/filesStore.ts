@@ -1,4 +1,3 @@
-import { invoke } from "@tauri-apps/api";
 import { createStore } from "solid-js/store";
 
 export interface Store {

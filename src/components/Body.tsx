@@ -8,7 +8,6 @@ export default function () {
     const [files, setFiles] = createSignal<DirEntry[]>([]);
 
     createEffect(() => {
-        filesStore.reload;
         invoke<DirEntry[]>("get_files", { path: filesStore.path })
             .then((files) => {
                 setFiles(
